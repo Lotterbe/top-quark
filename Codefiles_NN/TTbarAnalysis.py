@@ -243,7 +243,12 @@ class TTbarAnalysis(Analysis.Analysis):
       all_chi_squ = [poss1_chi_squ, poss2_chi_squ, poss3_chi_squ, poss4_chi_squ, poss5_chi_squ, poss6_chi_squ]
       min_chi_squ = min(all_chi_squ)
       min_index = all_chi_squ.index(min_chi_squ)
-      
+      #print('Hadr. W, Px: ' + str(poss5_hadr_w.Px()))
+      #print('Lept. W, Px: ' + str(Wleptonic.Px()))
+      #print('Hadr. W, Py: ' + str(poss5_hadr_w.Py()))
+      #print('Lept. W, Py: ' + str(Wleptonic.Py()))
+      #print('Hadr. W, Pz: ' + str(poss5_hadr_w.Pz()))
+      #print('Lept. W, Pz: ' + str(Wleptonic.Pz()))
 
       # Leptonic W boson
       Wmass = Wleptonic.M() # vorher = 80
@@ -251,12 +256,88 @@ class TTbarAnalysis(Analysis.Analysis):
       # Hadronic top quark
       topmass = 172.5 # vorher = 172.5
 
+      #Kinematische Größen 
+      #center of mass energy
+      def centerofmass_E(particle_list):
+            energies = 0
+            for i in range(0, len(particle_list)):
+                  energies += particle_list[i].E()
+            com_E = ((energies)**2)**(1/2)
+            return com_E
+      #total transverse momentum
+      def tottransmom_length(poss_list):
+            ttm = np.zeros(3)
+            #calc of ttmx
+            for particle in poss_list:
+                  ttm[0] += particle.Px()
+            #calc of ttmy
+            for particle in poss_list:
+                  ttm[1] += particle.Py()
+            #calc of ttmz
+            for particle in poss_list:
+                  ttm[2] += particle.Pz()
+            ttm_length = ttm[0]**2 + ttm[1]**2 + ttm[2]**2
+            return ttm_length 
+      def eta(particle_TMz, particle_length):
+            eta_part = 1/2 * np.log((particle_length + particle_TMz)/(particle_length - particle_TMz))
+            return eta_part
+      #transverse momentum difference between b-Jet and W-Boson
+      def diff_pTrans(particle1, particle2):
+            dpt = np.zeros(3)
+            dpt[0] = particle1.Px() - particle2.Px()
+            dpt[1] = particle1.Py() - particle2.Py()
+            dpt[2] = particle1.Pz() - particle2.Pz()
+            return dpt
+      def calc_kin_obs(poss_list):
+            #Aufschlüsselung Teilchen: 
+      #[0]=semilep_top, [1]=lepton, [2]=neutrino, [3]=lep_w, [4]=semilep_b, [5]=hadr_top, [6]=qjet, [7]=qbarjet
+      #[8]=hadr_w, [9]=hadr_b
+            hadr_topmass = poss_list[5].M()
+            hadr_top_TMlength = poss_list[5].Px()**2 + poss_list[5].Py()**2 + poss_list[5].Pz()**2
+            hadr_topeta = eta(poss_list[5].Pz(), hadr_top_TMlength)
+            semilep_topmass = poss_list[0].M()
+            semilep_top_TMlength = poss_list[0].Px()**2 + poss_list[0].Py()**2 + poss_list[0].Pz()**2
+            semilep_topeta = eta(poss_list[0].Pz(), hadr_top_TMlength)
+            #total_TransMom
+            tot_TM = tottransmom_length(poss_list)
+            slep_w_TM_length = poss_list[3].Px()**2 + poss_list[3].Py()**2 + poss_list[3].Pz()**2
+            slep_weta = eta(poss_list[3].Pz(), slep_w_TM_length)
+            lepeta = leadlepton.eta()
+            lep_TM_length = poss_list[1].Px()**2 + poss_list[1].Py()**2 + poss_list[1].Pz()**2
+            com_otherjets = centerofmass_E([poss_list[6], poss_list[7]])
+            com_tot = centerofmass_E(poss_list)
+            com_bjets = centerofmass_E([poss_list[4], poss_list[9]])
+            #transversal moment difference between hadr_b and hadr_w
+            Diff_TM_hadrbw = diff_pTrans(poss_list[9], poss_list[8])
+            #transversal moment difference between slep_b and slep_w
+            Diff_TM_slepbw = diff_pTrans(poss_list[4], poss_list[3])
+
+      #calculation of the kinematic observables with the right chi-assignment
+      if min_index == 0:
+            #poss1
+            calc_kin_obs(poss1_list)
+      if min_index == 1:
+            #poss2
+            calc_kin_obs(poss2_list)
+      if min_index == 2:
+            #poss3
+            calc_kin_obs(poss3_list)
+      if min_index == 3:
+            #poss4
+            calc_kin_obs(poss4_list)
+      if min_index == 4:
+            #poss5
+            calc_kin_obs(poss5_list)
+      if min_index == 5:
+            #poss6
+            calc_kin_obs(poss6_list)
 
       ##########################################################################
 
       ###########################################################################
       ### Ab hier findet das fuellen der Histogramme statt
-
+      #new added histograms
+      print('klappt!\n#################')
 
       # Histograms detailing event information
       self.hist_vxp_z.Fill(eventinfo.primaryVertexPosition(), weight)
