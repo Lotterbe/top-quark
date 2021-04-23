@@ -20,8 +20,9 @@ class TTbarAnalysis(Analysis.Analysis):
       self.hist_WtMass      =  self.addStandardHistogram("WtMass")
 
       self.hist_leptn       =  self.addStandardHistogram("lep_n")
-      self.hist_leptpt      =  self.addStandardHistogram("lep_pt")
-      self.hist_lepteta     =  self.addStandardHistogram("lep_eta")
+      #Erwähne ich später
+      #self.hist_leptpt      =  self.addStandardHistogram("lep_pt")
+      #self.hist_lepteta     =  self.addStandardHistogram("lep_eta")
       self.hist_leptE       =  self.addStandardHistogram("lep_E")
       self.hist_leptphi     =  self.addStandardHistogram("lep_phi")
       self.hist_leptch      =  self.addStandardHistogram("lep_charge")
@@ -44,7 +45,29 @@ class TTbarAnalysis(Analysis.Analysis):
       self.hist_pvxp_n      = self.addStandardHistogram("pvxp_n")
 
       self.hist_Wmass       = self.addStandardHistogram("W_mass")
-      self.hist_topmass     = self.addStandardHistogram("top_mass")
+      #heißt bei uns jetzt anders
+      #self.hist_topmass     = self.addStandardHistogram("top_mass")
+
+      #Eigene Histogramme
+      #Massen
+      self.hist_hadr_topmass   =  self.addStandardHistogram("hadr_topmass")
+      self.hist_semilep_topmass     =  self.addStandardHistogram("semilep_topmass")
+      #etas
+      self.hist_hadr_topeta   =  self.addStandardHistogram("hadr_topeta")
+      self.hist_semilep_topeta=  self.addStandardHistogram("semilep_topeta")
+      self.hist_semilep_weta   =  self.addStandardHistogram("semilep_weta")
+      self.hist_lepeta  =  self.addStandardHistogram("lepeta")
+      #transversal impuls
+      self.hist_hadr_topTM    =  self.addStandardHistogram("hadr_topTM")
+      self.hist_semilep_topTM =  self.addStandardHistogram("semilep_topTM")
+      self.hist_semilep_wTM   =  self.addStandardHistogram("semilep_wTM")
+      self.hist_lepTM   =  self.addStandardHistogram("lepTM")
+      self.hist_totTM   =  self.addStandardHistogram("totTM")
+      #com
+      self.hist_com_otherjets =  self.addStandardHistogram("com_otherjets")
+      self.hist_com_bjets     =  self.addStandardHistogram("com_bjets")
+      self.hist_com_tot =  self.addStandardHistogram("com_tot")
+      
 
 
   def analyze(self):
@@ -90,25 +113,6 @@ class TTbarAnalysis(Analysis.Analysis):
       ##########################################################################
       ## Aufgabe 2
       
-
-#Leas Schleife um Jets zu sortieren 
-      #Whadronic = goodJets[Whadronic_indices[0]].tlv() + goodJets[Whadronic_indices[1]].tlv()
-      #b1 = goodJets[b_indices[0]].tlv()
-      #b2 = goodJets[b_indices[1]].tlv()
-      #dr1 = Whadronic.DeltaR(b1)
-      #dr2 = Whadronic.DeltaR(b2)
-      #if dr1 < dr2:
-      #	thadronic = Whadronic + b1
-      #else:
-      #	thadronic = Whadronic + b2
-
-      #Transversalimpuls Neutrino
-      #Transversalimpuls-Komponenten x und y des Neutrinos
-      #TransMomNeutrino_x = - (goodJets[0].tlv().Px() + goodJets[1].tlv().Px() + goodJets[2].tlv().Px()\
-      #+ goodJets[3].tlv().Px() + leadlepton.tlv().Px())
-      #TransMomNeutrino_y = - (goodJets[0].tlv().Py() + goodJets[1].tlv().Py() + goodJets[2].tlv().Py()\
-      # + goodJets[3].tlv().Py() + leadlepton.tlv().Py())
-
       #z-Komponente des Neutrino-Impulses
       def NeutrinoZMomentum(lepton_vec, neutrino_trans_momentum_x, neutrino_trans_momentum_y, neutrino_phi):
             phi = neutrino_phi
@@ -142,14 +146,6 @@ class TTbarAnalysis(Analysis.Analysis):
             #print(zMoment)
             return zMoment
 
-
-      #print('0: ' + str(leadlepton.tlv()[0]) + '\n1: ' + str(leadlepton.tlv()[1]) + '\n\n2: ' \
-      #      + str(leadlepton.tlv()[2]) + '\n3: ' + str(leadlepton.tlv()[3]))
-      #print('tlv x: ' + str(etmiss.tlv().Px()))
-      #print('Mein x: ' + str(TransMomNeutrino_x))
-      #print('tlv y: ' + str(etmiss.tlv().Py()))
-      #print('Mein y:' + str(TransMomNeutrino_y))
-      #print('#########################')
       etmiss.tlv().SetPz(NeutrinoZMomentum(leadlepton.tlv(), etmiss.tlv().Px(), etmiss.tlv().Py(), etmiss.phi())) 
       Wleptonic = leadlepton.tlv() + etmiss.tlv()
 
@@ -176,10 +172,10 @@ class TTbarAnalysis(Analysis.Analysis):
             return chi_squ
 
       #Überprüfung, welches der jets als bjet getaggt wurde
-      btagged_jet = goodJets[b_jet_tag[0]].tlv()
-      first_other_jet = goodJets[other_jets[0]].tlv()
-      second_other_jet = goodJets[other_jets[1]].tlv()
-      third_other_jet = goodJets[other_jets[2]].tlv()
+      btagged_jet = goodJets[b_jet_tag[0]]
+      first_other_jet = goodJets[other_jets[0]]
+      second_other_jet = goodJets[other_jets[1]]
+      third_other_jet = goodJets[other_jets[2]]
       #Berechnung der chi² der verschiedenen Permutationen
       #Listen um alle Permutationen abzuspeichern und später darauf zuzugreifen
       #6 Permutationen und 10 teilnehmende Teilchen
@@ -188,156 +184,159 @@ class TTbarAnalysis(Analysis.Analysis):
       #[8]=hadr_w, [9]=hadr_b
       for i in range(0, 6):
             #semileptonischer t-Zerfall
-            poss13_semilep_t = Wleptonic + btagged_jet
+            poss13_semilep_t = Wleptonic + btagged_jet.tlv()
             if i == 0:
-                  poss1_hadr_w = first_other_jet + second_other_jet
-                  poss1_hadr_t = poss1_hadr_w + third_other_jet
+                  poss1_hadr_w = first_other_jet.tlv() + second_other_jet.tlv()
+                  poss1_hadr_t = poss1_hadr_w + third_other_jet.tlv()
                   poss1_chi_squ = chi_squared(poss1_hadr_w, poss13_semilep_t, poss1_hadr_t)
                   poss1_list = [poss13_semilep_t, leadlepton.tlv(), etmiss.tlv(),\
-                   Wleptonic, btagged_jet, poss1_hadr_t, first_other_jet, second_other_jet,\
-                   poss1_hadr_w, third_other_jet]
+                   Wleptonic, btagged_jet.tlv(), poss1_hadr_t, first_other_jet.tlv(), second_other_jet.tlv(),\
+                   poss1_hadr_w, third_other_jet.tlv()]
             if i == 1:
-                  poss2_hadr_w = second_other_jet + third_other_jet
-                  poss2_hadr_t = poss2_hadr_w + first_other_jet
+                  poss2_hadr_w = second_other_jet.tlv() + third_other_jet.tlv()
+                  poss2_hadr_t = poss2_hadr_w + first_other_jet.tlv()
                   poss2_chi_squ = chi_squared(poss2_hadr_w, poss13_semilep_t, poss2_hadr_t)
                   poss2_list = [poss13_semilep_t, leadlepton.tlv(), etmiss.tlv(),\
-                   Wleptonic, btagged_jet, poss2_hadr_t, second_other_jet, third_other_jet,\
-                   poss2_hadr_w, first_other_jet]
+                   Wleptonic, btagged_jet.tlv(), poss2_hadr_t, second_other_jet.tlv(), third_other_jet.tlv(),\
+                   poss2_hadr_w, first_other_jet.tlv()]
             if i == 2:
-                  poss3_hadr_w = third_other_jet + first_other_jet
-                  poss3_hadr_t = poss3_hadr_w + second_other_jet
+                  poss3_hadr_w = third_other_jet.tlv() + first_other_jet.tlv()
+                  poss3_hadr_t = poss3_hadr_w + second_other_jet.tlv()
                   poss3_chi_squ = chi_squared(poss3_hadr_w, poss13_semilep_t, poss3_hadr_t)
                   poss3_list = [poss13_semilep_t, leadlepton.tlv(), etmiss.tlv(),\
-                   Wleptonic, btagged_jet, poss3_hadr_t, third_other_jet, first_other_jet,\
-                   poss3_hadr_w, second_other_jet]
+                   Wleptonic, btagged_jet.tlv(), poss3_hadr_t, third_other_jet.tlv(), first_other_jet.tlv(),\
+                   poss3_hadr_w, second_other_jet.tlv()]
             #hadronischer t-Zerfall
             if i == 3:
-                  poss4_semilep_t = Wleptonic + third_other_jet
-                  poss4_hadr_w = first_other_jet + second_other_jet
-                  poss4_hadr_t = poss4_hadr_w + btagged_jet
+                  poss4_semilep_t = Wleptonic + third_other_jet.tlv()
+                  poss4_hadr_w = first_other_jet.tlv() + second_other_jet.tlv()
+                  poss4_hadr_t = poss4_hadr_w + btagged_jet.tlv()
                   poss4_chi_squ = chi_squared(poss4_hadr_w, poss4_semilep_t, poss4_hadr_t)
                   poss4_list = [poss4_semilep_t, leadlepton.tlv(), etmiss.tlv(),\
-                   Wleptonic, third_other_jet, poss4_hadr_t, first_other_jet, second_other_jet,\
-                   poss4_hadr_w, btagged_jet]
+                   Wleptonic, third_other_jet.tlv(), poss4_hadr_t, first_other_jet.tlv(), second_other_jet.tlv(),\
+                   poss4_hadr_w, btagged_jet.tlv()]
             if i == 4:
-                  poss5_semilep_t = Wleptonic + first_other_jet
-                  poss5_hadr_w = second_other_jet + third_other_jet
-                  poss5_hadr_t = poss5_hadr_w + btagged_jet
+                  poss5_semilep_t = Wleptonic + first_other_jet.tlv()
+                  poss5_hadr_w = second_other_jet.tlv() + third_other_jet.tlv()
+                  poss5_hadr_t = poss5_hadr_w + btagged_jet.tlv()
                   poss5_chi_squ = chi_squared(poss5_hadr_w, poss5_semilep_t, poss5_hadr_t)
                   poss5_list = [poss5_semilep_t, leadlepton.tlv(), etmiss.tlv(),\
-                   Wleptonic, first_other_jet, poss5_hadr_t, second_other_jet, third_other_jet,\
-                   poss5_hadr_w, btagged_jet]
+                   Wleptonic, first_other_jet.tlv(), poss5_hadr_t, second_other_jet.tlv(), third_other_jet.tlv(),\
+                   poss5_hadr_w, btagged_jet.tlv()]
             if i == 5:
-                  poss6_semilep_t = Wleptonic + second_other_jet
-                  poss6_hadr_w = third_other_jet + first_other_jet
-                  poss6_hadr_t = poss6_hadr_w + btagged_jet
+                  poss6_semilep_t = Wleptonic + second_other_jet.tlv()
+                  poss6_hadr_w = third_other_jet.tlv() + first_other_jet.tlv()
+                  poss6_hadr_t = poss6_hadr_w + btagged_jet.tlv()
                   poss6_chi_squ = chi_squared(poss6_hadr_w, poss6_semilep_t, poss6_hadr_t)
                   poss6_list = [poss6_semilep_t, leadlepton.tlv(), etmiss.tlv(),\
-                   Wleptonic, second_other_jet, poss6_hadr_t, third_other_jet, first_other_jet,\
-                   poss6_hadr_w, btagged_jet]
-
-      #print('Verschiedene chi² der unterschiedlichen Permutationen des semileptonischen top-Zerfalls: \n 1: '\
-      # + str(poss1_chi_squ) + '\n 2: ' + str(poss2_chi_squ) + '\n 3: ' + str(poss3_chi_squ))   
+                   Wleptonic, second_other_jet.tlv(), poss6_hadr_t, third_other_jet.tlv(), first_other_jet.tlv(),\
+                   poss6_hadr_w, btagged_jet.tlv()]
 
       #Auswahl des chi² mit dem kleinsten Wert, d.h. Auswahl der richtigen Zuordnung der bJets
       all_chi_squ = [poss1_chi_squ, poss2_chi_squ, poss3_chi_squ, poss4_chi_squ, poss5_chi_squ, poss6_chi_squ]
       min_chi_squ = min(all_chi_squ)
       min_index = all_chi_squ.index(min_chi_squ)
-      #print('Hadr. W, Px: ' + str(poss5_hadr_w.Px()))
-      #print('Lept. W, Px: ' + str(Wleptonic.Px()))
-      #print('Hadr. W, Py: ' + str(poss5_hadr_w.Py()))
-      #print('Lept. W, Py: ' + str(Wleptonic.Py()))
-      #print('Hadr. W, Pz: ' + str(poss5_hadr_w.Pz()))
-      #print('Lept. W, Pz: ' + str(Wleptonic.Pz()))
 
       # Leptonic W boson
       Wmass = Wleptonic.M() # vorher = 80
 
-      # Hadronic top quark
-      topmass = 172.5 # vorher = 172.5
-
       #Kinematische Größen 
-      #center of mass energy
+      #center of mass energy/ Inverse Masse
       def centerofmass_E(particle_list):
             energies = 0
             for i in range(0, len(particle_list)):
                   energies += particle_list[i].E()
             com_E = ((energies)**2)**(1/2)
             return com_E
-      #total transverse momentum
-      def tottransmom_length(poss_list):
-            ttm = np.zeros(3)
-            #calc of ttmx
-            for particle in poss_list:
-                  ttm[0] += particle.Px()
-            #calc of ttmy
-            for particle in poss_list:
-                  ttm[1] += particle.Py()
-            #calc of ttmz
-            for particle in poss_list:
-                  ttm[2] += particle.Pz()
-            ttm_length = ttm[0]**2 + ttm[1]**2 + ttm[2]**2
-            return ttm_length 
-      def eta(particle_TMz, particle_length):
-            eta_part = 1/2 * np.log((particle_length + particle_TMz)/(particle_length - particle_TMz))
-            return eta_part
-      #transverse momentum difference between b-Jet and W-Boson
-      def diff_pTrans(particle1, particle2):
-            dpt = np.zeros(3)
-            dpt[0] = particle1.Px() - particle2.Px()
-            dpt[1] = particle1.Py() - particle2.Py()
-            dpt[2] = particle1.Pz() - particle2.Pz()
-            return dpt
+      #transverse momentum
+      def transverse_momentum(particle_tlv):
+            transmom = (particle_tlv.Px()**2 + particle_tlv.Py()**2)**0.5
+            return transmom 
+      #Pseudorapidität
+      def eta(particle_tlv):
+            Mom_length = (particle_tlv.Px()**2 + particle_tlv.Py()**2 + particle_tlv.Pz()**2)**0.5
+            eta_particle = 1/2 * np.log((Mom_length + particle_tlv.Pz()) \
+                  / (Mom_length - particle_tlv.Pz()))
+            return eta_particle
+
       def calc_kin_obs(poss_list):
             #Aufschlüsselung Teilchen: 
-      #[0]=semilep_top, [1]=lepton, [2]=neutrino, [3]=lep_w, [4]=semilep_b, [5]=hadr_top, [6]=qjet, [7]=qbarjet
-      #[8]=hadr_w, [9]=hadr_b
+            #[0]=semilep_top, [1]=lepton, [2]=neutrino, [3]=lep_w, [4]=semilep_b, [5]=hadr_top, [6]=qjet, [7]=qbarjet
+            #[8]=hadr_w, [9]=hadr_b
+            #14 verschiedene kinematische Observablen
+            #Massen
             hadr_topmass = poss_list[5].M()
-            hadr_top_TMlength = poss_list[5].Px()**2 + poss_list[5].Py()**2 + poss_list[5].Pz()**2
-            hadr_topeta = eta(poss_list[5].Pz(), hadr_top_TMlength)
             semilep_topmass = poss_list[0].M()
-            semilep_top_TMlength = poss_list[0].Px()**2 + poss_list[0].Py()**2 + poss_list[0].Pz()**2
-            semilep_topeta = eta(poss_list[0].Pz(), hadr_top_TMlength)
-            #total_TransMom
-            tot_TM = tottransmom_length(poss_list)
-            slep_w_TM_length = poss_list[3].Px()**2 + poss_list[3].Py()**2 + poss_list[3].Pz()**2
-            slep_weta = eta(poss_list[3].Pz(), slep_w_TM_length)
+            #eta
+            hadr_topeta = eta(poss_list[5])
+            semilep_topeta = eta(poss_list[0])
+            semilep_weta = eta(poss_list[3])
             lepeta = leadlepton.eta()
-            lep_TM_length = poss_list[1].Px()**2 + poss_list[1].Py()**2 + poss_list[1].Pz()**2
+            #Transversal impuls
+            hadr_topTM = transverse_momentum(poss_list[5])
+            semilep_topTM = transverse_momentum(poss_list[0])
+            semilep_wTM = transverse_momentum(poss_list[3])
+            lepTM = leadlepton.pt()
+            #gesamt transversal impuls
+            totTM = 0
+            for particle in poss_list:
+                  totTM += transverse_momentum(particle)
+            #center of mass energy
             com_otherjets = centerofmass_E([poss_list[6], poss_list[7]])
-            com_tot = centerofmass_E(poss_list)
             com_bjets = centerofmass_E([poss_list[4], poss_list[9]])
-            #transversal moment difference between hadr_b and hadr_w
-            Diff_TM_hadrbw = diff_pTrans(poss_list[9], poss_list[8])
-            #transversal moment difference between slep_b and slep_w
-            Diff_TM_slepbw = diff_pTrans(poss_list[4], poss_list[3])
+            com_tot = centerofmass_E(poss_list)
+            return hadr_topmass, semilep_topmass, hadr_topeta, semilep_topeta, semilep_weta, lepeta, hadr_topTM, \
+                  semilep_wTM, lepTM, totTM, com_otherjets, com_bjets, com_tot
 
       #calculation of the kinematic observables with the right chi-assignment
+      hadr_topmass = 0
+      semilep_topmass = 0
+      hadr_topeta = 0 
+      semilep_topeta = 0 
+      semilep_weta = 0
+      lepeta = 0
+      #Transversal impuls
+      hadr_topTM = 0
+      semilep_topTM = 0
+      semilep_wTM = 0
+      lepTM = 0
+      #gesamt transversal impuls
+      totTM = 0
+      #center of mass energy
+      com_otherjets = 0
+      com_bjets = 0
+      com_tot = 0
+
       if min_index == 0:
             #poss1
-            calc_kin_obs(poss1_list)
+            hadr_topmass, semilep_topmass, hadr_topeta, semilep_topeta, semilep_weta, lepeta, hadr_topTM, \
+                  semilep_wTM, lepTM, totTM, com_otherjets, com_bjets, com_tot = calc_kin_obs(poss1_list)
       if min_index == 1:
             #poss2
-            calc_kin_obs(poss2_list)
+            hadr_topmass, semilep_topmass, hadr_topeta, semilep_topeta, semilep_weta, lepeta, hadr_topTM, \
+                  semilep_wTM, lepTM, totTM, com_otherjets, com_bjets, com_tot = calc_kin_obs(poss2_list)
       if min_index == 2:
             #poss3
-            calc_kin_obs(poss3_list)
+            hadr_topmass, semilep_topmass, hadr_topeta, semilep_topeta, semilep_weta, lepeta, hadr_topTM, \
+                  semilep_wTM, lepTM, totTM, com_otherjets, com_bjets, com_tot = calc_kin_obs(poss3_list)
       if min_index == 3:
             #poss4
-            calc_kin_obs(poss4_list)
+            hadr_topmass, semilep_topmass, hadr_topeta, semilep_topeta, semilep_weta, lepeta, hadr_topTM, \
+                  semilep_wTM, lepTM, totTM, com_otherjets, com_bjets, com_tot = calc_kin_obs(poss4_list)
       if min_index == 4:
             #poss5
-            calc_kin_obs(poss5_list)
+            hadr_topmass, semilep_topmass, hadr_topeta, semilep_topeta, semilep_weta, lepeta, hadr_topTM, \
+                  semilep_wTM, lepTM, totTM, com_otherjets, com_bjets, com_tot = calc_kin_obs(poss5_list)
       if min_index == 5:
             #poss6
-            calc_kin_obs(poss6_list)
+            hadr_topmass, semilep_topmass, hadr_topeta, semilep_topeta, semilep_weta, lepeta, hadr_topTM, \
+                  semilep_wTM, lepTM, totTM, com_otherjets, com_bjets, com_tot = calc_kin_obs(poss6_list)
+
 
       ##########################################################################
 
       ###########################################################################
       ### Ab hier findet das fuellen der Histogramme statt
-      #new added histograms
-      print('klappt!\n#################')
 
       # Histograms detailing event information
       self.hist_vxp_z.Fill(eventinfo.primaryVertexPosition(), weight)
@@ -351,8 +350,9 @@ class TTbarAnalysis(Analysis.Analysis):
 
       # histograms detailing lepton information
       self.hist_leptn.Fill(len(goodLeptons), weight)
-      self.hist_leptpt.Fill(leadlepton.pt(), weight)
-      self.hist_lepteta.Fill(leadlepton.eta(), weight)
+      #erwähne ich später
+      #self.hist_leptpt.Fill(leadlepton.pt(), weight)
+      #self.hist_lepteta.Fill(leadlepton.eta(), weight)
       self.hist_leptE.Fill(leadlepton.e(), weight)
       self.hist_leptphi.Fill(leadlepton.phi(), weight)
       self.hist_leptch.Fill(leadlepton.charge(), weight)
@@ -372,9 +372,30 @@ class TTbarAnalysis(Analysis.Analysis):
       [self.hist_jeteta.Fill(jet.eta(), weight) for jet in goodJets]
       [self.hist_jetmv1.Fill(jet.mv1(), weight) for jet in goodJets]
 
+      #hadronic W mass
       self.hist_Wmass.Fill(Wmass, weight)
-      self.hist_topmass.Fill(topmass, weight)
 
+      #eigene Histogramme
+      #print('klappt!\n#################')
+      #masses 
+      self.hist_hadr_topmass.Fill(hadr_topmass, weight)
+      self.hist_semilep_topmass.Fill(semilep_topmass, weight)
+      #etas
+      self.hist_hadr_topeta.Fill(hadr_topeta, weight)
+      self.hist_semilep_topeta.Fill(semilep_topeta, weight)
+      self.hist_semilep_weta.Fill(semilep_weta, weight)
+      self.hist_lepeta.Fill(lepeta, weight)
+      #transversal impulse
+      self.hist_hadr_topTM.Fill(hadr_topTM, weight)
+      self.hist_semilep_topTM.Fill(semilep_topTM, weight)
+      self.hist_semilep_wTM.Fill(semilep_wTM, weight)
+      self.hist_lepTM.Fill(lepTM, weight)
+      self.hist_totTM.Fill(totTM, weight)
+      #com
+      self.hist_com_otherjets.Fill(com_otherjets, weight)
+      self.hist_com_bjets.Fill(com_bjets, weight)
+      self.hist_com_tot.Fill(com_tot, weight)
+      
       return True
 
   def finalize(self):
