@@ -2,10 +2,12 @@ import ROOT
 import itertools
 import math
 import numpy as np
+import array
 
 from Analysis import Analysis
 from Analysis import AnalysisHelpers
 from Analysis import Constants
+
 
 #======================================================================
 
@@ -68,6 +70,12 @@ class TTbarAnalysis(Analysis.Analysis):
       self.hist_com_bjets     =  self.addStandardHistogram("com_bjets")
       self.hist_com_tot =  self.addStandardHistogram("com_tot")
       
+      #Variablen Namen für das output tuple und das erstellen dieser
+      self.varnames = ["HadronicTopMass", "SemilepTopMass", "HadronicTopEta", "SemilepTopEta", "SemilepWEta", \
+      "LepEta", "HadronicTopTransMom", "SemilepTopTransMom", "SemilepWTransMom", "LepTransMom", "TotalTransMom",\
+      "COMOtherJets", "COMbJets", "COMTotal"]
+      self.varnames.append("weight")
+      self.output_tuple = ROOT.TNtuple("tuple", "tuple", ":".join(self.varnames))
 
 
   def analyze(self):
@@ -332,6 +340,15 @@ class TTbarAnalysis(Analysis.Analysis):
             hadr_topmass, semilep_topmass, hadr_topeta, semilep_topeta, semilep_weta, lepeta, hadr_topTM, \
                   semilep_wTM, lepTM, totTM, com_otherjets, com_bjets, com_tot = calc_kin_obs(poss6_list)
 
+      #Variablen Liste für nTuple
+      values = [hadr_topmass, semilep_topmass, hadr_topeta, semilep_topeta,\
+      semilep_weta, lepeta, hadr_topTM, semilep_topTM, semilep_wTM, \
+      lepTM, totTM, com_otherjets, com_bjets, com_tot, weight]
+
+      #konvertiere die Variablen Liste in ein float array und fülle diese in das Output Tuple
+      #self.output_tuple.Fill(arr_val)
+      self.output_tuple.Fill(array.array('f', values))
+
 
       ##########################################################################
 
@@ -346,7 +363,7 @@ class TTbarAnalysis(Analysis.Analysis):
       self.hist_WtMass.Fill(AnalysisHelpers.WTransverseMass(leadlepton, etmiss), weight)
 
       # histograms for missing et
-      self.hist_etmiss.Fill(etmiss.et(),weight)
+      self.hist_etmiss.Fill(etmiss.et(), weight)
 
       # histograms detailing lepton information
       self.hist_leptn.Fill(len(goodLeptons), weight)
@@ -399,4 +416,6 @@ class TTbarAnalysis(Analysis.Analysis):
       return True
 
   def finalize(self):
+      self.output_tuple.Write()
+
       pass
