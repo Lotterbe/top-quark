@@ -55,12 +55,11 @@ def getStandardHistogram(name):
     if (name == "WtMass"):            return ROOT.TH1D("WtMass",            "Transverse Mass of the W Candidate; M_{T,W} [GeV]; Events", 40, 0, 200)
     if (name == "invMass"):           return ROOT.TH1D("invMass",           "Invariant Mass of the Z Candidate;M_{ll} [GeV]; Events", 30, 60,120)
     
-    if (name == "W_mass"):            return ROOT.TH1D("W_mass",            "Hadronic W boson mass; M(W) [GeV]; Events", 20, 40, 120)
-    
     #Eigene Variablen 
     #Massen
     if (name == "hadr_topmass"):          return ROOT.TH1D("hadr_topmass",            "Hadronic top quark mass; M(top) [GeV]; Events", 30, 100, 220)
     if (name == "semilep_topmass"):          return ROOT.TH1D("semilep_topmass",            "Semileptonic top quark mass; M(top) [GeV]; Events", 30, 100, 220)
+    if (name == "W_mass"):            return ROOT.TH1D("W_mass",            "Semileptonic W boson mass; M(W) [GeV]; Events", 20, 40, 120)
     #eta
     if (name == "hadr_topeta"):    return ROOT.TH1D("hadr_topeta",    "Hadronic Top-Quark Pseudorapidity; #eta^{Hadr_top}; Hadronic Top-Quarks", 20, 40,120)
     if (name == "semilep_topeta"):    return ROOT.TH1D("semilep_topeta",    "Semileptonic Top-Quark Pseudorapidity; #eta^{Slep_top}; Semileptonic Top-Quarks ", 20, 40,120)

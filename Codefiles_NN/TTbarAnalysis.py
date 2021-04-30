@@ -7,6 +7,7 @@ import array
 from Analysis import Analysis
 from Analysis import AnalysisHelpers
 from Analysis import Constants
+from cmath import sqrt as csqrt
 
 
 #======================================================================
@@ -46,7 +47,6 @@ class TTbarAnalysis(Analysis.Analysis):
       self.hist_vxp_z       = self.addStandardHistogram("vxp_z")
       self.hist_pvxp_n      = self.addStandardHistogram("pvxp_n")
 
-      self.hist_Wmass       = self.addStandardHistogram("W_mass")
       #heißt bei uns jetzt anders
       #self.hist_topmass     = self.addStandardHistogram("top_mass")
 
@@ -54,6 +54,7 @@ class TTbarAnalysis(Analysis.Analysis):
       #Massen
       self.hist_hadr_topmass   =  self.addStandardHistogram("hadr_topmass")
       self.hist_semilep_topmass     =  self.addStandardHistogram("semilep_topmass")
+      self.hist_Wmass       = self.addStandardHistogram("W_mass")
       #etas
       self.hist_hadr_topeta   =  self.addStandardHistogram("hadr_topeta")
       self.hist_semilep_topeta=  self.addStandardHistogram("semilep_topeta")
@@ -71,39 +72,62 @@ class TTbarAnalysis(Analysis.Analysis):
       self.hist_com_tot =  self.addStandardHistogram("com_tot")
       
       #Variablen Namen für das output tuple und das erstellen dieser
-      self.varnames = ["HadronicTopMass", "SemilepTopMass", "HadronicTopEta", "SemilepTopEta", "SemilepWEta", \
+      self.varnames = ["HadronicTopMass", "SemilepTopMass", "SemilepWMass", "HadronicTopEta", "SemilepTopEta", "SemilepWEta", \
       "LepEta", "HadronicTopTransMom", "SemilepTopTransMom", "SemilepWTransMom", "LepTransMom", "TotalTransMom",\
       "COMOtherJets", "COMbJets", "COMTotal"]
       self.varnames.append("weight")
       self.output_tuple = ROOT.TNtuple("tuple", "tuple", ":".join(self.varnames))
 
 #z-Komponente des Neutrino-Impulses
-  def NeutrinoZMomentum(self, lepton_vec, neutrino_trans_momentum_x, neutrino_trans_momentum_y, neutrino_phi):
-      phi = neutrino_phi
+  def NeutrinoZMomentum(self, lepton_vec, neutrino_trans_momentum_x, neutrino_trans_momentum_y):
       neutrino_px = neutrino_trans_momentum_x
       neutrino_py = neutrino_trans_momentum_y
       lepton = lepton_vec
       #Annahme für die die Berechnung des pz vum Neutrino gilt 
       mw = 80.42
-      mu = mw**2/2 + math.cos(phi) * (lepton.Px()*neutrino_px + lepton.Py()*neutrino_py)
-      neutrino_trans_squ = neutrino_px**2 + neutrino_py**2
-      zMomentPos = (lepton.Pz()*mu + lepton.E()*((lepton.E()**2+lepton.Pz()**2)*neutrino_trans_squ\
-                  +mu**2)**(1/2)) / (lepton.E()**2-lepton.Pz()**2)
-      zMomentNeg = (lepton.Pz()*mu - lepton.E()*((lepton.E()**2+lepton.Pz()**2)*neutrino_trans_squ\
-                  +mu**2)**(1/2)) / (lepton.E()**2-lepton.Pz()**2)
+      #mw = 0
+      mu = mw / 2 + (neutrino_px * lepton.Px() + neutrino_py * lepton.Py())
+      #Umformung 
+      neutrino_TM_squ = neutrino_px**2 + neutrino_py**2
+      #zMomentPos = (mu * lepton.Pz() + lepton.E() * np.lib.scimath.sqrt((lepton.Pz()**2 - lepton.E()**2) * neutrino_TM_squ \
+      #      + mu**2)) / (lepton.E()**2 - lepton.Pz()**2) 
+      #print('Pos' + str(zMomentPos))
+      #zMomentNeg = (mu * lepton.Pz() - lepton.E() * np.lib.scimath.sqrt((lepton.Pz()**2 - lepton.E()**2) * neutrino_TM_squ \
+      #      + mu**2)) / (lepton.E()**2 - lepton.Pz()**2) 
+      #straight aus dem skript
+      zMomentPos = (mu * lepton.Pz()) / (lepton.E()**2 - lepton.Pz()**2) \
+      + np.lib.scimath.sqrt(((mu * lepton.Pz()) / (lepton.E()**2 - lepton.Pz()**2))**2 \
+      - (lepton.E()**2 * neutrino_TM_squ - mu**2) / (lepton.E()**2 - lepton.Pz()**2))
+      zMomentNeg = (mu * lepton.Pz()) / (lepton.E()**2 - lepton.Pz()**2) \
+      - np.lib.scimath.sqrt(((mu * lepton.Pz()) / (lepton.E()**2 - lepton.Pz()**2))**2 \
+      - (lepton.E()**2 * neutrino_TM_squ - mu**2) / (lepton.E()**2 - lepton.Pz()**2))
+      #print('Neg' + str(zMomentNeg))
+      #vorher
+      #mu = mw**2/2 + math.cos(phi) * (lepton.Px()*neutrino_px + lepton.Py()*neutrino_py)
+      #neutrino_trans_squ = neutrino_px**2 + neutrino_py**2
+      #zMomentPos = (lepton.Pz()*mu + lepton.E()*((lepton.E()**2+lepton.Pz()**2)*neutrino_trans_squ\
+      #            +mu**2)**(1/2)) / (lepton.E()**2-lepton.Pz()**2)
+      #zMomentNeg = (lepton.Pz()*mu - lepton.E()*((lepton.E()**2+lepton.Pz()**2)*neutrino_trans_squ\
+      #            +mu**2)**(1/2)) / (lepton.E()**2-lepton.Pz()**2)
       #Filtern, welches die 'richtige' Lösung ist
-      if type(zMomentPos) == complex:
-            if type(zMomentNeg) == complex:
-                  if zMomentNeg.real > zMomentPos.real:
+      #print('Pos' + str(type(zMomentPos)))
+      #print('Neg' + str(type(zMomentNeg))) 
+
+      if zMomentPos.imag != 0.0:
+            #print('Henlo, bin in Fall 1')
+            if zMomentNeg.imag != 0.0:
+                  if np.abs(zMomentNeg.real) > np.abs(zMomentPos.real):
                         zMoment = zMomentPos.real
                   else:
                         zMoment = zMomentNeg.real
             else:
                   zMoment = zMomentNeg
-      elif type(zMomentNeg) == complex:
+      elif zMomentNeg.imag != 0.0:
+            #print('Henlo, bin in Fall 2')
             zMoment = zMomentPos
       else:
-            if zMomentNeg > zMomentPos:
+            #print('Henlo, bin in Fall 3')
+            if np.abs(zMomentNeg) > np.abs(zMomentPos):
                   zMoment = zMomentPos
             else:
                   zMoment = zMomentNeg
@@ -203,7 +227,7 @@ class TTbarAnalysis(Analysis.Analysis):
 
       ##########################################################################
       ## Aufgabe 2
-      zmom = self.NeutrinoZMomentum(leadlepton.tlv(), etmiss.tlv().Px(), etmiss.tlv().Py(), etmiss.phi())
+      zmom = self.NeutrinoZMomentum(leadlepton.tlv(), etmiss.tlv().Px(), etmiss.tlv().Py())
 
       etmiss.tlv().SetPz(zmom) 
       Wleptonic = leadlepton.tlv() + etmiss.tlv()
@@ -288,6 +312,7 @@ class TTbarAnalysis(Analysis.Analysis):
 
       # Leptonic W boson
       Wmass = Wleptonic.M() # vorher = 80
+      
 
       #Kinematische Größen
 
@@ -336,7 +361,7 @@ class TTbarAnalysis(Analysis.Analysis):
                    semilep_topTM, semilep_wTM, lepTM, totTM, com_otherjets, com_bjets, com_tot = self.calc_kin_obs(poss6_list, leadlepton)
 
       #Variablen Liste für nTuple
-      values = [hadr_topmass, semilep_topmass, hadr_topeta, semilep_topeta,\
+      values = [hadr_topmass, semilep_topmass, Wmass, hadr_topeta, semilep_topeta,\
       semilep_weta, lepeta, hadr_topTM, semilep_topTM, semilep_wTM, \
       lepTM, totTM, com_otherjets, com_bjets, com_tot, weight]
 
@@ -384,14 +409,13 @@ class TTbarAnalysis(Analysis.Analysis):
       [self.hist_jeteta.Fill(jet.eta(), weight) for jet in goodJets]
       [self.hist_jetmv1.Fill(jet.mv1(), weight) for jet in goodJets]
 
-      #hadronic W mass
-      self.hist_Wmass.Fill(Wmass, weight)
 
       #eigene Histogramme
       #print('klappt!\n#################')
       #masses 
       self.hist_hadr_topmass.Fill(hadr_topmass, weight)
       self.hist_semilep_topmass.Fill(semilep_topmass, weight)
+      self.hist_Wmass.Fill(Wmass, weight)
       #etas
       self.hist_hadr_topeta.Fill(hadr_topeta, weight)
       self.hist_semilep_topeta.Fill(semilep_topeta, weight)
@@ -413,4 +437,3 @@ class TTbarAnalysis(Analysis.Analysis):
   def finalize(self):
       self.output_tuple.Write()
 
-      pass
