@@ -136,6 +136,7 @@ void Teacher()
       InputArray[0] = GetValue(back,"HadronicTopMass");
       InputArray[1] = GetValue(back,"SemilepTopMass");
       InputArray[2] = GetValue(back,"SemilepWMass");
+      //InputArray[3] = GetValue(back,"LepMass");
       InputArray[3] = GetValue(back,"HadronicTopEta");
       InputArray[4] = GetValue(back,"SemilepTopEta");
       InputArray[5] = GetValue(back,"SemilepWEta");
@@ -186,9 +187,10 @@ void Teacher()
 
       // ==== TODO add more input variables
 
- InputArray[0] = GetValue(signal,"HadronicTopMass");
+      InputArray[0] = GetValue(signal,"HadronicTopMass");
       InputArray[1] = GetValue(signal,"SemilepTopMass");
       InputArray[2] = GetValue(signal,"SemilepWMass");
+      //InputArray[3] = GetValue(signal,"LepMass");
       InputArray[3] = GetValue(signal,"HadronicTopEta");
       InputArray[4] = GetValue(signal,"SemilepTopEta");
       InputArray[5] = GetValue(signal,"SemilepWEta");

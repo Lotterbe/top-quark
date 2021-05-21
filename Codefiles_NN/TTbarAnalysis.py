@@ -55,6 +55,7 @@ class TTbarAnalysis(Analysis.Analysis):
       self.hist_hadr_topmass   =  self.addStandardHistogram("hadr_topmass")
       self.hist_semilep_topmass     =  self.addStandardHistogram("semilep_topmass")
       self.hist_Wmass       = self.addStandardHistogram("W_mass")
+      #self.hist_lep_mass       = self.addStandardHistogram("lep_mass")
       #etas
       self.hist_hadr_topeta   =  self.addStandardHistogram("hadr_topeta")
       self.hist_semilep_topeta=  self.addStandardHistogram("semilep_topeta")
@@ -78,8 +79,6 @@ class TTbarAnalysis(Analysis.Analysis):
       self.varnames.append("weight")
       self.output_tuple = ROOT.TNtuple("tuple", "tuple", ":".join(self.varnames))
 
-      self.neutrino_Pz_wrong = []
-      self.neutrino_Pz_right = []
 
 #z-Komponente des Neutrino-Impulses
   def NeutrinoZMomentum(self, lepton, neutrino):
@@ -94,56 +93,10 @@ class TTbarAnalysis(Analysis.Analysis):
             + mu**2)) / (lepton.tlv().E()**2 - lepton.tlv().Pz()**2) 
       zMomentNeg = (mu * lepton.tlv().Pz() - lepton.tlv().E() * np.lib.scimath.sqrt((lepton.tlv().Pz()**2 - lepton.tlv().E()**2) * neutrino_TM_squ \
             + mu**2)) / (lepton.tlv().E()**2 - lepton.tlv().Pz()**2) 
-      #straight aus dem skript
-      #zMomentPos2 = (mu * lepton.Pz()) / (lepton.E()**2 - lepton.Pz()**2) \
-      #+ np.lib.scimath.sqrt(((mu * lepton.Pz()) / (lepton.E()**2 - lepton.Pz()**2))**2 \
-      #- (lepton.E()**2 * neutrino_TM_squ - mu**2) / (lepton.E()**2 - lepton.Pz()**2))
-      #zMomentNeg = (mu * lepton.Pz()) / (lepton.E()**2 - lepton.Pz()**2) \
-      #- np.lib.scimath.sqrt(((mu * lepton.Pz()) / (lepton.E()**2 - lepton.Pz()**2))**2 \
-      #- (lepton.E()**2 * neutrino_TM_squ - mu**2) / (lepton.E()**2 - lepton.Pz()**2))
-
-      #if zMomentPos != 0.0:
-      #      print('Pos Komplex!')
-      #if zMomentNeg != 0.0:
-      #      print('Neg Komplex!')
-      #else: 
-      #      print('##########\nNichts\n#############')
-      #print('neutrino Px: ' + str(neutrino_vec.Px()))
-      #print('neutrino Py: ' + str(neutrino_vec.Py()))
-      #print('lepton_Px: ' + str(lepton_vec.Px()))
-      #print('lepton_Py: ' + str(lepton_vec.Py()))
-      #print('lepton_Pz: ' + str(lepton_vec.Pz()))
-      #print('lepton_E: ' + str(lepton_vec.E()))
-      #print('mu: ' + str(mu))
-      #Filtern, welches die 'richtige' Lösung ist
       if np.absolute(zMomentPos.real) > np.absolute(zMomentNeg.real):
-            #print('Pos: ' + str(zMomentPos.real))
-            #print('Neg: ' + str(zMomentNeg.real))
             zMoment = zMomentNeg.real
       else:
             zMoment = zMomentPos.real
-            #print('Pos: ' + str(zMomentPos.real))
-            #print('Neg: ' + str(zMomentNeg.real))
-      #print('##################')
-      #if zMomentPos.imag != 0.0:
-            #print('Henlo, bin in Fall 1')
-      #      if zMomentNeg.imag != 0.0:
-      #            if np.absolute(zMomentNeg.real) > np.absolute(zMomentPos.real):
-      #                  zMoment = zMomentPos.real
-      #            else:
-      #                  zMoment = zMomentNeg.real
-      #      else:
-      #            zMoment = zMomentNeg
-      #elif zMomentNeg.imag != 0.0:
-            #print('Henlo, bin in Fall 2')
-      #      zMoment = zMomentPos
-      #else:
-            #print('Henlo, bin in Fall 3')
-      #      if np.absolute(zMomentNeg) > np.absolute(zMomentPos):
-      #            zMoment = zMomentPos
-      #      else:
-      #            zMoment = zMomentNeg
-      #print(zMoment)
       return zMoment
 
 # Definierung von chi² Funktion
@@ -175,6 +128,7 @@ class TTbarAnalysis(Analysis.Analysis):
       hadr_topmass = poss_list[5].M()
       semilep_topmass = poss_list[0].M()
       semilep_wmass = poss_list[3].M()
+      #lep_mass = poss_list[1].M()
       #eta
       hadr_topeta = poss_list[5].PseudoRapidity()
       semilep_topeta = poss_list[0].PseudoRapidity()
@@ -333,6 +287,7 @@ class TTbarAnalysis(Analysis.Analysis):
       hadr_topmass = 0
       semilep_topmass = 0
       Wmass = 0
+      #lep_mass = 0
       hadr_topeta = 0 
       semilep_topeta = 0 
       semilep_weta = 0
@@ -374,18 +329,6 @@ class TTbarAnalysis(Analysis.Analysis):
             hadr_topmass, semilep_topmass, Wmass, hadr_topeta, semilep_topeta, semilep_weta, lepeta, hadr_topTM, \
                    semilep_topTM, semilep_wTM, lepTM, totTM, com_otherjets, com_bjets, com_tot = self.calc_kin_obs(poss6_list, leadlepton)
       
-      #if Wmass < 0.0:
-      #      self.neutrino_Pz_wrong.append(etmiss.tlv().Pz())
-      #      print('etmiss_vor: ' + str(etmiss.tlv().Pz()))
-      #      etmiss.tlv().SetPz(-zmom)
-      #      Wleptonic = leadlepton.tlv() + etmiss.tlv()
-      #      Wmass = Wleptonic.M()
-      #      print('etmiss T ' + str(etmiss.tlv().T()))
-      #      print('etmiss_nach ' + str(etmiss.tlv().Pz()))
-      #      print('Wmass ' + str(Wmass))
-      #      print('#######################')
-      #else: 
-      #      self.neutrino_Pz_right.append(etmiss.tlv().Pz())
       #Variablen Liste für nTuple
       values = [hadr_topmass, semilep_topmass, Wmass, hadr_topeta, semilep_topeta,\
       semilep_weta, lepeta, hadr_topTM, semilep_topTM, semilep_wTM, \
@@ -442,6 +385,7 @@ class TTbarAnalysis(Analysis.Analysis):
       self.hist_hadr_topmass.Fill(hadr_topmass, weight)
       self.hist_semilep_topmass.Fill(semilep_topmass, weight)
       self.hist_Wmass.Fill(Wmass, weight)
+      #self.hist_lep_mass.Fill(lep_mass, weight)
       #etas
       self.hist_hadr_topeta.Fill(hadr_topeta, weight)
       self.hist_semilep_topeta.Fill(semilep_topeta, weight)
