@@ -53,8 +53,9 @@ int main(int argc, char** argv)
     return -1; 
   }
 
-  std::string filename=argv[1];
-
+  std::string indir="/home/student/atlas-outreach-PyROOT-framework-13tev/results/";
+  //std::string indir="../train/";
+  std::string filename=indir + argv[1];
   std::string outname="output/h_" + filename.substr(filename.rfind("/")+1);
 
   //create NeuroBayes instance
@@ -72,7 +73,7 @@ int main(int argc, char** argv)
   Int_t NEntries=chain->GetEntries();
 
   // =====  TODO Adjust nvar accordingly ===============
-  int  nvar = 15;     //number of input variables
+  int  nvar = 12;     //number of input variables
   // =================================================== 
   
   do 
@@ -90,20 +91,20 @@ int main(int argc, char** argv)
       // ==== TODO add more input variables
       InputArray[0] = GetValue(chain,"HadronicTopMass");
       InputArray[1] = GetValue(chain,"SemilepTopMass");
-      InputArray[2] = GetValue(chain,"SemilepWMass");
+      //InputArray[2] = GetValue(chain,"SemilepWMass");
       //InputArray[3] = GetValue(chain,"LepMass");
-      InputArray[3] = GetValue(chain,"HadronicTopEta");
-      InputArray[4] = GetValue(chain,"SemilepTopEta");
-      InputArray[5] = GetValue(chain,"SemilepWEta");
-      InputArray[6] = GetValue(chain,"LepEta");
-      InputArray[7] = GetValue(chain,"HadronicTopTransMom");
-      InputArray[8] = GetValue(chain,"SemilepTopTransMom");
-      InputArray[9] = GetValue(chain,"SemilepWTransMom");
-      InputArray[10] = GetValue(chain,"LepTransMom");
-      InputArray[11] = GetValue(chain,"TotalTransMom");
-      InputArray[12] = GetValue(chain,"COMOtherJets");
-      InputArray[13] = GetValue(chain,"COMbJets");
-      InputArray[14] = GetValue(chain,"COMTotal");
+      //InputArray[3] = GetValue(chain,"HadronicTopEta");
+      InputArray[2] = GetValue(chain,"SemilepTopEta");
+      InputArray[3] = GetValue(chain,"SemilepWEta");
+      InputArray[4] = GetValue(chain,"LepEta");
+      InputArray[5] = GetValue(chain,"HadronicTopTransMom");
+      InputArray[6] = GetValue(chain,"SemilepTopTransMom");
+      InputArray[7] = GetValue(chain,"SemilepWTransMom");
+      InputArray[8] = GetValue(chain,"LepTransMom");
+      //InputArray[11] = GetValue(chain,"TotalTransMom");
+      InputArray[9] = GetValue(chain,"COMOtherJets");
+      InputArray[10] = GetValue(chain,"COMbJets");
+      InputArray[11] = GetValue(chain,"COMTotal");
 
       double nn_out =  nb->nb_expert(InputArray);
  //     double weight = GetValue(chain,"weight");

@@ -48,7 +48,7 @@ void Teacher()
   //setup network topology
 
   // =====  TODO Adjust nvar accordingly ===============
-  const int  nvar = 15;     //number of input variables
+  const int  nvar = 12;     //number of input variables
   // ===================================================
 
   // number of nodes in input layer is set automatically
@@ -98,15 +98,16 @@ void Teacher()
   //  background upper sideband
   //  Einfuegen der Datensaetze: UNTERGRUND
   TChain *back=new TChain("tuple");
+  // vorher NUR: WenuWithB, WmunuWithB, WtaunuWithB
   back->Add("/home/student/atlas-outreach-PyROOT-framework-13tev/results/WenuWithB.root");
-  //back->Add("WenuJetsBVeto.root");
-  //back->Add("WenuNoJetsBVeto.root");
-  //back->Add("WmunuJetsBVeto.root");
+  //back->Add("/home/student/atlas-outreach-PyROOT-framework-13tev/results/WenuJetsBVeto.root");
+  //back->Add("/home/student/atlas-outreach-PyROOT-framework-13tev/results/WenuNoJetsBVeto.root");
+  //back->Add("/home/student/atlas-outreach-PyROOT-framework-13tev/results/WmunuJetsBVeto.root");
   back->Add("/home/student/atlas-outreach-PyROOT-framework-13tev/results/WmunuWithB.root");
-  //back->Add("WmunuNoJetsBVeto.root");
-  //back->Add("WtaunuJetsBVeto.root");
+  //back->Add("/home/student/atlas-outreach-PyROOT-framework-13tev/results/WmunuNoJetsBVeto.root");
+  //back->Add("/home/student/atlas-outreach-PyROOT-framework-13tev/results/WtaunuJetsBVeto.root");
   back->Add("/home/student/atlas-outreach-PyROOT-framework-13tev/results/WtaunuWithB.root");
-  //back->Add("WtaunuNoJetsBVeto.root");
+  //back->Add("/home/student/atlas-outreach-PyROOT-framework-13tev/results/WtaunuNoJetsBVeto.root");
 
   Int_t NEntriesbg = Int_t(back->GetEntries());
 
@@ -135,20 +136,20 @@ void Teacher()
 
       InputArray[0] = GetValue(back,"HadronicTopMass");
       InputArray[1] = GetValue(back,"SemilepTopMass");
-      InputArray[2] = GetValue(back,"SemilepWMass");
+      //InputArray[2] = GetValue(back,"SemilepWMass");
       //InputArray[3] = GetValue(back,"LepMass");
-      InputArray[3] = GetValue(back,"HadronicTopEta");
-      InputArray[4] = GetValue(back,"SemilepTopEta");
-      InputArray[5] = GetValue(back,"SemilepWEta");
-      InputArray[6] = GetValue(back,"LepEta");
-      InputArray[7] = GetValue(back,"HadronicTopTransMom");
-      InputArray[8] = GetValue(back,"SemilepTopTransMom");
-      InputArray[9] = GetValue(back,"SemilepWTransMom");
-      InputArray[10] = GetValue(back,"LepTransMom");
-      InputArray[11] = GetValue(back,"TotalTransMom");
-      InputArray[12] = GetValue(back,"COMOtherJets");
-      InputArray[13] = GetValue(back,"COMbJets");
-      InputArray[14] = GetValue(back,"COMTotal");
+      //InputArray[3] = GetValue(back,"HadronicTopEta");
+      InputArray[2] = GetValue(back,"SemilepTopEta");
+      InputArray[3] = GetValue(back,"SemilepWEta");
+      InputArray[4] = GetValue(back,"LepEta");
+      InputArray[5] = GetValue(back,"HadronicTopTransMom");
+      InputArray[6] = GetValue(back,"SemilepTopTransMom");
+      InputArray[7] = GetValue(back,"SemilepWTransMom");
+      InputArray[8] = GetValue(back,"LepTransMom");
+      //InputArray[11] = GetValue(back,"TotalTransMom");
+      InputArray[9] = GetValue(back,"COMOtherJets");
+      InputArray[10] = GetValue(back,"COMbJets");
+      InputArray[11] = GetValue(back,"COMTotal");
 
 
 
@@ -189,20 +190,20 @@ void Teacher()
 
       InputArray[0] = GetValue(signal,"HadronicTopMass");
       InputArray[1] = GetValue(signal,"SemilepTopMass");
-      InputArray[2] = GetValue(signal,"SemilepWMass");
+      //InputArray[2] = GetValue(signal,"SemilepWMass");
       //InputArray[3] = GetValue(signal,"LepMass");
-      InputArray[3] = GetValue(signal,"HadronicTopEta");
-      InputArray[4] = GetValue(signal,"SemilepTopEta");
-      InputArray[5] = GetValue(signal,"SemilepWEta");
-      InputArray[6] = GetValue(signal,"LepEta");
-      InputArray[7] = GetValue(signal,"HadronicTopTransMom");
-      InputArray[8] = GetValue(signal,"SemilepTopTransMom");
-      InputArray[9] = GetValue(signal,"SemilepWTransMom");
-      InputArray[10] = GetValue(signal,"LepTransMom");
-      InputArray[11] = GetValue(signal,"TotalTransMom");
-      InputArray[12] = GetValue(signal,"COMOtherJets");
-      InputArray[13] = GetValue(signal,"COMbJets");
-      InputArray[14] = GetValue(signal,"COMTotal");
+      //InputArray[3] = GetValue(signal,"HadronicTopEta");
+      InputArray[2] = GetValue(signal,"SemilepTopEta");
+      InputArray[3] = GetValue(signal,"SemilepWEta");
+      InputArray[4] = GetValue(signal,"LepEta");
+      InputArray[5] = GetValue(signal,"HadronicTopTransMom");
+      InputArray[6] = GetValue(signal,"SemilepTopTransMom");
+      InputArray[7] = GetValue(signal,"SemilepWTransMom");
+      InputArray[8] = GetValue(signal,"LepTransMom");
+      //InputArray[11] = GetValue(signal,"TotalTransMom");
+      InputArray[9] = GetValue(signal,"COMOtherJets");
+      InputArray[10] = GetValue(signal,"COMbJets");
+      InputArray[11] = GetValue(signal,"COMTotal");
 
       //===================================
 	  
