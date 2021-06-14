@@ -107,8 +107,7 @@ int main(int argc, char** argv)
       InputArray[11] = GetValue(chain,"COMTotal");
 
       double nn_out =  nb->nb_expert(InputArray);
- //     double weight = GetValue(chain,"weight");
-         double weight = 1;
+      double weight = GetValue(chain,"weight");
       h_nn->Fill(nn_out,weight);
  
       // increase counter for total number of events read in

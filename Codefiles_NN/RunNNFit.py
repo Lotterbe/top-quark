@@ -40,7 +40,7 @@ hsig.Scale(getScaleFactor("ttbar_lep"))
 ## Make an empty histogram with the axis properties of the data histogram
 hbkg = ROOT.TH1F("bkg","bkg",hdata.GetNbinsX(),hdata.GetXaxis().GetXmin(),hdata.GetXaxis().GetXmax())
 
-bkg = ["WenuWithB", "WmunuWithB", "WtaunuWithB"]#, "stop_schan", "stop_tchan_antitop", "stop_tchan_top", "stop_wtchan", "WenuJetsBVeto", "WenuNoJetsBVeto", "WmunuJetsBVeto", "WmunuNoJetsBVeto", "WtaunuJetsBVeto", "WtaunuNoJetsBVeto", "WW", "WZ", "Zee", "Zmumu", "Ztautau", "ZZ"] #TODO add all other backgrounds  
+bkg = ["WenuWithB", "WmunuWithB", "WtaunuWithB", "stop_schan", "stop_tchan_antitop", "stop_tchan_top", "stop_wtchan", "WenuJetsBVeto", "WenuNoJetsBVeto", "WmunuJetsBVeto", "WmunuNoJetsBVeto", "WtaunuJetsBVeto", "WtaunuNoJetsBVeto", "WW", "WZ", "Zee", "Zmumu", "Ztautau", "ZZ"] #TODO add all other backgrounds  
 
 
 for b in bkg: 
@@ -116,6 +116,35 @@ hdata.SetMarkerStyle(20)
 hdata.SetMarkerSize(1)
 hdata.Draw("p same")
 
-canvas.SaveAs("nn_fit.png")
+#canvas.SaveAs("nn_fit.png")
+
+############# Ratio plot #######################################
+
+ROOT.gPad.SetBottomMargin(0.3)
+ratiopad = ROOT.TPad("ratio","ratio",0,0,1,0.25)
+ratiopad.SetTopMargin(0)
+ratiopad.SetBottomMargin(0.3)
+ratiopad.Draw()
+ratiopad.cd()
+
+ratio = hdata.Clone("ratio")
+ratio.Divide(htotal.GetStack().Last())
+
+
+ratio.SetNdivisions(205,"y")
+ratio.SetNdivisions(505,"x")
+ratio.SetLabelSize(0.1,"x")
+ratio.SetLabelSize(0.1,"y")
+ratio.SetTitleSize(0.1,"x")
+ratio.SetTitleSize(0.1,"y")
+
+ratio.SetTitle("")
+ratio.GetYaxis().SetTitle("data / prediction")
+ratio.Draw("p")
+
+oneline = ROOT.TLine(ratio.GetXaxis().GetXmin(),1,ratio.GetXaxis().GetXmax(),1)
+oneline.Draw()
+
+canvas.SaveAs("nn_fit_pimped.png")
 
 
